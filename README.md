@@ -1,6 +1,10 @@
 # Netflix GPT
 - Create react app
 - Configured Tailwing css
+- Created Components Header, Login, Browse, Body
+- Installed react router dom - (npm install -D react-router-dom)
+- Header
+- Login & Singup Form
 
 # Features
 - Login/Singup Pages
