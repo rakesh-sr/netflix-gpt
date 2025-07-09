@@ -1,12 +1,78 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Header } from "./Header";
+import { checkValidData } from "../utils/validate"
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { auth, FIREBASE_AUTH_ERROR_CODES } from "../utils/firebase";
 
 const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
+  const [errorMsg, setErrorMsg] = useState("")
+
+
+  const nameRef = useRef(null);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+
 
   const toggleSignInForm = () => {
     setIsSignInForm(!isSignInForm);
   };
+
+  const handleButtonClick = (e) => {
+    e.preventDefault();
+    //validate form data
+    const name = !isSignInForm ? nameRef.current.value : "";
+    const email = emailRef.current.value;
+    const password = passwordRef.current.value;
+    const errorMsg = checkValidData(isSignInForm, name, email, password);
+    setErrorMsg(errorMsg);
+
+    if (errorMsg) return;
+
+    if (!isSignInForm) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Signed up 
+          const user = userCredential.user;
+          console.log(user);
+        })
+        .catch((error) => {
+          setLoginErrorMsg(error);
+        });
+    }
+    else {
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Signed in 
+          const user = userCredential.user;
+          console.log(user);
+        })
+        .catch((error) => {
+          setLoginErrorMsg(error);
+        });
+    }
+  }
+
+  const setLoginErrorMsg = (error) => {
+    const errorCode = error.code;
+    console.log(errorCode);
+    if (errorCode === FIREBASE_AUTH_ERROR_CODES.CREDENTIAL_ALREADY_IN_USE ||
+      errorCode === FIREBASE_AUTH_ERROR_CODES.EMAIL_EXISTS) {
+      setErrorMsg("Email already exists. Please use a different email.");
+      return;
+    }
+    else if (errorCode === FIREBASE_AUTH_ERROR_CODES.INVALID_LOGIN_CREDENTIALS) {
+      setErrorMsg("Invalid Credentails.");
+      return;
+    }
+    else {
+      setErrorMsg("An unexpected error occurred. Please try again later.");
+      console.error("Error during authentication: ", error.code + " - " + error.message);
+      return;
+    }
+  }
+
+
   return (
     <>
       <div>
@@ -23,28 +89,30 @@ const Login = () => {
           </h1>
           {!isSignInForm && <input
             type="text"
+            ref={nameRef}
             placeholder="Full Name"
             className="p-2 my-4 w-full bg-gray-600 rounded-lg"
           />}
           <input
             type="text"
+            ref={emailRef}
             placeholder="Email Address"
             className="p-2 my-4 w-full bg-gray-600 rounded-lg"
           />
 
           <input
             type="password"
+            ref={passwordRef}
             placeholder="Password"
             className="p-2 my-4 w-full bg-gray-600 rounded-lg"
           />
-
-          <button className="p-4 my-6 bg-red-600 w-full rounded-lg">
-            {" "}
+          {errorMsg && <p className="text-red-500">{errorMsg}</p>}
+          <button className="p-4 my-6 bg-red-600 w-full rounded-lg" onClick={handleButtonClick}>
             {isSignInForm ? "Sign In" : "Sign Up"}
           </button>
-          <p className="py-4" onClick={toggleSignInForm}>
-            {isSignInForm
-              ? "Alreadt registered? Sign In Now"
+          <p className="py-4 cursor-pointer" onClick={toggleSignInForm}>
+            {!isSignInForm
+              ? "Already registered? Sign In Now"
               : "New to Netflix? Sign Up Now"}{" "}
           </p>
         </form>

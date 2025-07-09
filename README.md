@@ -5,7 +5,10 @@
 - Installed react router dom - (npm install -D react-router-dom)
 - Header
 - Login & Singup Form
-
+- Form Validations
+- Use Ref hook
+- firebase setup and deploying app to production
+- firebase authentication
 # Features
 - Login/Singup Pages
     - Sign in Form- once authenticated redirect to Browse Page
