@@ -1,10 +1,18 @@
 import { useRef, useState } from "react";
 import { Header } from "./Header";
 import { checkValidData } from "../utils/validate"
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, FIREBASE_AUTH_ERROR_CODES } from "../utils/firebase";
+import { useNavigate } from "react-router-dom";
+
+import { useDispatch } from 'react-redux';
+import { addUser } from '../utils/userSlice';
 
 const Login = () => {
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [isSignInForm, setIsSignInForm] = useState(true);
   const [errorMsg, setErrorMsg] = useState("")
 
@@ -34,7 +42,9 @@ const Login = () => {
         .then((userCredential) => {
           // Signed up 
           const user = userCredential.user;
+          updateAuthProfile(user, name);
           console.log(user);
+          navigate("/browse");
         })
         .catch((error) => {
           setLoginErrorMsg(error);
@@ -46,11 +56,29 @@ const Login = () => {
           // Signed in 
           const user = userCredential.user;
           console.log(user);
+          navigate("/browse");
         })
         .catch((error) => {
           setLoginErrorMsg(error);
         });
     }
+  }
+
+  const updateAuthProfile = (user, name) => {
+    updateProfile(user, {
+      displayName: name,
+      photoURL: "https://occ-0-3215-3663.1.nflxso.net/dnm/api/v6/vN7bi_My87NPKvsBoib006Llxzg/AAAABTZ2zlLdBVC05fsd2YQAR43J6vB1NAUBOOrxt7oaFATxMhtdzlNZ846H3D8TZzooe2-FT853YVYs8p001KVFYopWi4D4NXM.png?r=229",
+    }).then(() => {
+       dispatch(addUser({uid: user.uid, email: user.email, displayName: user.displayName, photoURL: user.photoURL}));
+                      
+      console.log("Profile updated successfully");
+      // Profile updated!
+      // ...
+    }).catch((error) => {
+      // An error occurred
+      // ...
+    });
+
   }
 
   const setLoginErrorMsg = (error) => {

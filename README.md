@@ -8,7 +8,11 @@
 - Form Validations
 - Use Ref hook
 - firebase setup and deploying app to production
-- firebase authentication
+- firebase authentication - signup and sign in 
+- created redux store and added signed in user details
+- update profile
+- signout
+
 # Features
 - Login/Singup Pages
     - Sign in Form- once authenticated redirect to Browse Page
