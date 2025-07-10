@@ -12,6 +12,11 @@
 - created redux store and added signed in user details
 - update profile
 - signout
+- BugFix - signup user display name and photourl update
+- BugFix - if the user is not logged in redirect to browse page and vice versa
+- Unsubscribed to the onAuthStateChanged callback
+- Moved hardcoded values to constants
+
 
 # Features
 - Login/Singup Pages

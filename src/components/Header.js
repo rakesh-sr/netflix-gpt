@@ -1,29 +1,53 @@
-import React from 'react';
-import { signOut } from "firebase/auth";
+import React, { useEffect } from 'react';
+import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from '../utils/firebase';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { addUser, removeUser } from '../utils/userSlice';
+import { LOGO } from '../utils/constants';
 
 
 export const Header = () => {
 
     const user = useSelector((store) => store.user);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleSignout = () => {
         signOut(auth).then(() => {
             console.log("User signed out successfully");
-            navigate('/');
+
         }).catch((error) => {
             // An error happened.
         });
     }
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (user) {
+                dispatch(addUser({ uid: user.uid, email: user.email, displayName: user.displayName, photoURL: user.photoURL }));
+                navigate('/browse');
+                console.log("User is signed in:", user);
+
+            } else {
+                dispatch(removeUser());
+                navigate('/');
+                console.log("User Signed out");
+            }
+        });
+
+        return () => {
+
+            unsubscribe();
+
+        }
+    }, []);
     return (
 
         <div className='absolute w-screen px-8 py-2 flex bg-gradient-to-b from-black z-10 justify-between'>
 
             <img alt='logo' className='w-44'
-                src='https://help.nflxext.com/helpcenter/OneTrust/oneTrust_production_2025-07-01/consent/87b6a5c0-0104-4e96-a291-092c11350111/01938dc4-59b3-7bbc-b635-c4131030e85f/logos/dd6b162f-1a32-456a-9cfe-897231c7763c/4345ea78-053c-46d2-b11e-09adaef973dc/Netflix_Logo_PMS.png' />
+                src={LOGO} />
 
             {user && <div className='flex p-2'>
                 <img alt='user-icon' className='w-12 h-12 m-2' src={user.photoURL} />

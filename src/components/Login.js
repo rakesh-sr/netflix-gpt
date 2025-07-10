@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 import { useDispatch } from 'react-redux';
 import { addUser } from '../utils/userSlice';
+import { USER_AVATAR, BACKGROUND_IMAGE } from "../utils/constants";
 
 const Login = () => {
 
@@ -43,8 +44,6 @@ const Login = () => {
           // Signed up 
           const user = userCredential.user;
           updateAuthProfile(user, name);
-          console.log(user);
-          navigate("/browse");
         })
         .catch((error) => {
           setLoginErrorMsg(error);
@@ -55,8 +54,6 @@ const Login = () => {
         .then((userCredential) => {
           // Signed in 
           const user = userCredential.user;
-          console.log(user);
-          navigate("/browse");
         })
         .catch((error) => {
           setLoginErrorMsg(error);
@@ -67,10 +64,10 @@ const Login = () => {
   const updateAuthProfile = (user, name) => {
     updateProfile(user, {
       displayName: name,
-      photoURL: "https://occ-0-3215-3663.1.nflxso.net/dnm/api/v6/vN7bi_My87NPKvsBoib006Llxzg/AAAABTZ2zlLdBVC05fsd2YQAR43J6vB1NAUBOOrxt7oaFATxMhtdzlNZ846H3D8TZzooe2-FT853YVYs8p001KVFYopWi4D4NXM.png?r=229",
+      photoURL: USER_AVATAR,
     }).then(() => {
-       dispatch(addUser({uid: user.uid, email: user.email, displayName: user.displayName, photoURL: user.photoURL}));
-                      
+      dispatch(addUser({ uid: user.uid, email: user.email, displayName: user.displayName, photoURL: user.photoURL }));
+
       console.log("Profile updated successfully");
       // Profile updated!
       // ...
@@ -108,7 +105,7 @@ const Login = () => {
         <div className="absolute">
           <img
             alt="background-image"
-            src="https://assets.nflxext.com/ffe/siteui/vlv3/05e91faa-6f6d-4325-934e-5418dcc2567b/web/IN-en-20250630-TRIFECTA-perspective_159086b1-425f-435b-bcd5-1ed8039cdef9_large.jpg"
+            src={BACKGROUND_IMAGE}
           />
         </div>
         <form className="w-3/12 absolute p-8 bg-black my-32 mx-auto right-0 left-0 text-white bg-opacity-80 rounded-lg">
