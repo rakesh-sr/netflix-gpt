@@ -16,6 +16,11 @@
 - BugFix - if the user is not logged in redirect to browse page and vice versa
 - Unsubscribed to the onAuthStateChanged callback
 - Moved hardcoded values to constants
+- Register TMDP api & create APP and API key
+- Get Data from TMDP now playing movies list API
+- Add NowPlayingMovieList to redux store
+- Implementaion of main container, movie title and movie trailer to auto play
+- Adding movie trailer to store
 
 
 # Features
